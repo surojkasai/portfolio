@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:modern_portfolio/sections/spidy_button.dart';
 import 'package:modern_portfolio/util/HoverButton.dart';
-import 'package:modern_portfolio/util/hovercard.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HeroSection extends StatefulWidget {
@@ -30,7 +30,7 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
     _cursorController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
-    )..repeat(reverse: true); // blinking
+    )..repeat(reverse: true);
   }
 
   @override
@@ -41,26 +41,57 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final bool isMobile = size.width < 600;
+    final bool isTablet = size.width < 900;
+
+    // dynamic font sizes
+    final double nameSize = isMobile ? 55 : (isTablet ? 80 : 100);
+    final double roleSize = isMobile ? 20 : 28;
+
     return Padding(
-      padding: const EdgeInsets.only(top: 100, left: 250),
+      padding: EdgeInsets.only(
+        top: isMobile ? 50 : 100,
+        left: isMobile ? 20 : (isTablet ? 60 : 250),
+        right: 20,
+      ),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 900),
+          constraints: const BoxConstraints(maxWidth: 1000),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start, // important
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // small intro text
-              const Text(
-                "👋 Hi, I am",
-                style: TextStyle(
-                  fontSize: 30,
-                  color: Colors.white70,
-                  fontFamily: "Montserrat-Bold",
-                ),
+              // intro text
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset("assets/Hello.gif", color: Colors.white, height: isMobile ? 60 : 90),
+                  const SizedBox(width: 12),
+                  AnimatedTextKit(
+                    repeatForever: true,
+                    animatedTexts: [
+                      ColorizeAnimatedText(
+                        ',i am ',
+                        textStyle: GoogleFonts.inter(
+                          fontSize: isMobile ? 28 : 40,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        colors: const [
+                          Colors.white,
+                          Colors.white12,
+                          Colors.white24,
+                          Colors.white30,
+                          Colors.white38,
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
               ),
+
               const SizedBox(height: 10),
 
-              // big gradient name
+              // NAME
               ShaderMask(
                 shaderCallback:
                     (bounds) => const LinearGradient(
@@ -73,35 +104,34 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
                   children: [
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
                           "Suro",
                           style: TextStyle(
-                            fontSize: 100,
+                            fontSize: nameSize,
                             fontWeight: FontWeight.w700,
                             height: 1.0,
                             color: Colors.white,
                           ),
                         ),
-                        SizedBox(width: 5),
+                        const SizedBox(width: 5),
                         Text(
                           "j",
                           style: TextStyle(
-                            fontSize: 100, // BIGGER “j”
+                            fontSize: nameSize,
                             fontWeight: FontWeight.w700,
-                            height: 0.8, // pulls it downward
+                            height: 0.8,
                             color: Colors.white,
                           ),
                         ),
                       ],
                     ),
-
                     Padding(
-                      padding: const EdgeInsets.only(left: 210), // adjust this value
+                      padding: EdgeInsets.only(left: isMobile ? 100 : (isTablet ? 150 : 210)),
                       child: Text(
                         "Kasai",
-                        style: const TextStyle(
-                          fontSize: 100,
+                        style: TextStyle(
+                          fontSize: nameSize,
                           fontWeight: FontWeight.w700,
                           height: 1.0,
                           color: Colors.white,
@@ -118,100 +148,136 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
               Row(
                 children: [
                   DefaultTextStyle(
-                    style: const TextStyle(
-                      fontSize: 28,
+                    style: TextStyle(
+                      fontSize: roleSize,
                       color: Colors.white,
                       fontWeight: FontWeight.w500,
                     ),
                     child: AnimatedTextKit(
                       repeatForever: true,
                       animatedTexts: [
-                        TyperAnimatedText("Android Developer", speed: Duration(milliseconds: 120)),
+                        TyperAnimatedText(
+                          "Android Developer",
+                          speed: const Duration(milliseconds: 120),
+                        ),
                         TyperAnimatedText(
                           "Full Stack Developer",
-                          speed: Duration(milliseconds: 120),
+                          speed: const Duration(milliseconds: 120),
                         ),
-                        TyperAnimatedText("Backend Enthusiast", speed: Duration(milliseconds: 120)),
+                        TyperAnimatedText(
+                          "Backend Enthusiast",
+                          speed: const Duration(milliseconds: 120),
+                        ),
                       ],
                     ),
                   ),
                   FadeTransition(
                     opacity: _cursorController,
-                    child: const Text("|", style: TextStyle(fontSize: 28, color: Colors.white)),
+                    child: Text("|", style: TextStyle(fontSize: roleSize, color: Colors.white)),
                   ),
                 ],
               ),
+
               const SizedBox(height: 30),
 
-              // description paragraph
-              const SizedBox(
-                width: 700,
+              // description
+              SizedBox(
+                width: isMobile ? size.width * 0.9 : 700,
                 child: Text(
                   "Dedicated to building intuitive, high-performance applications that "
                   "deliver real value. Let’s create something extraordinary together.",
-                  style: TextStyle(fontSize: 22, height: 1.5, color: Colors.grey),
+                  style: TextStyle(fontSize: isMobile ? 16 : 22, height: 1.5, color: Colors.grey),
                 ),
               ),
+
               const SizedBox(height: 40),
 
               // buttons
-              Row(
-                children: [
-                  HoverButton(
-                    bgColor: Colors.white,
-                    frColor: Colors.black,
-                    shapeBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                    onPressed: widget.onViewMyWork,
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 22, vertical: 14),
-                      child: Text("View My Work  →", style: TextStyle(fontSize: 18)),
-                    ),
+              isMobile
+                  ? Column(
+                    children: [
+                      HoverButton(
+                        bgColor: Colors.white,
+                        frColor: Colors.black,
+                        shapeBorder: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        onPressed: widget.onViewMyWork,
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 22, vertical: 14),
+                          child: Text("View My Work  →", style: TextStyle(fontSize: 18)),
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      HoverButton(
+                        bgColor: Colors.black,
+                        frColor: Colors.white,
+                        shapeBorder: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        onPressed: widget.onLetsConnect,
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 22, vertical: 14),
+                          child: Text("Let's Connect", style: TextStyle(fontSize: 18)),
+                        ),
+                      ),
+                    ],
+                  )
+                  : Row(
+                    children: [
+                      HoverButton(
+                        bgColor: Colors.white,
+                        frColor: Colors.black,
+                        shapeBorder: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        onPressed: widget.onViewMyWork,
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 22, vertical: 14),
+                          child: Text("View My Work  →", style: TextStyle(fontSize: 18)),
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      HoverButton(
+                        bgColor: Colors.black,
+                        frColor: Colors.white,
+                        shapeBorder: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        onPressed: widget.onLetsConnect,
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 22, vertical: 14),
+                          child: Text("Let's Connect", style: TextStyle(fontSize: 18)),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 20),
-                  HoverButton(
-                    bgColor: Colors.black,
-                    frColor: Colors.white,
-                    shapeBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                    onPressed: widget.onLetsConnect,
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 22, vertical: 14),
-                      child: Text("Let's Connect", style: TextStyle(fontSize: 18)),
-                    ),
-                  ),
-                ],
-              ),
 
               const SizedBox(height: 50),
 
-              // social icons row
-              Row(
+              // socials responsive wrap
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   HoverButton(
-                    onPressed: () {
-                      launchURL("https://github.com/surojkasai");
-                    },
-                    shapeBorder: CircleBorder(),
+                    onPressed: () => launchURL("https://github.com/surojkasai"),
+                    shapeBorder: const CircleBorder(),
                     child: Image.asset('assets/github.png', color: Colors.black, height: 30),
                   ),
-                  const SizedBox(width: 12),
                   HoverButton(
-                    onPressed: () {
-                      launchURL("mailto:surojkasai@gmail.com");
-                    },
-                    shapeBorder: CircleBorder(),
-                    child: Icon(Icons.email, color: Colors.black),
+                    onPressed: () => launchURL("mailto:surojkasai@gmail.com"),
+                    shapeBorder: const CircleBorder(),
+                    child: const Icon(Icons.email, color: Colors.black),
                   ),
-                  const SizedBox(width: 12),
                   HoverButton(
-                    onPressed: () {
-                      launchURL("https://linkedin.com/in/surojkasai");
-                    },
-                    shapeBorder: CircleBorder(),
+                    onPressed: () => launchURL("https://linkedin.com/in/surojkasai"),
+                    shapeBorder: const CircleBorder(),
                     child: Image.asset('assets/linkedin.png', height: 30),
                   ),
-                  const SizedBox(width: 100),
-
-                  FloatingSpiderButton(),
+                  const SizedBox(width: 20),
+                  if (!isMobile) FloatingSpiderButton(),
                 ],
               ),
             ],

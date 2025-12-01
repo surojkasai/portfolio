@@ -8,17 +8,17 @@ class Skills extends StatefulWidget {
 }
 
 class _SkillsState extends State<Skills> {
-  // Skill data with icons
+  // Skill data with icons,image
   final List<Map<String, dynamic>> frontend = [
-    {"name": "Flutter ", "icon": Icons.flutter_dash},
+    {"name": "Flutter ", "icon": Image.asset("assets/flutter.png", color: Colors.white)},
     {"name": "TypeScript", "icon": Icons.code, "level": "Advanced"},
     {"name": "Tailwind CSS", "icon": Icons.palette, "level": "Expert"},
   ];
 
   final List<Map<String, dynamic>> backend = [
     {"name": ".Net", "icon": Icons.storage},
-    {"name": "Redis", "icon": Icons.storage},
-    {"name": "Hive", "icon": Icons.storage},
+    {"name": "Redis", "icon": Image.asset("db.png", color: Colors.white)},
+    {"name": "Hive", "icon": Image.asset("db.png", color: Colors.white)},
   ];
 
   @override
@@ -100,6 +100,15 @@ class _SkillCard extends StatefulWidget {
 
 class _SkillCardState extends State<_SkillCard> {
   bool hovered = false;
+  Widget _buildIcon(dynamic icon) {
+    if (icon is Image) {
+      return SizedBox(width: 28, height: 28, child: icon);
+    } else if (icon is IconData) {
+      return Icon(icon, size: 24, color: Colors.white);
+    } else {
+      return const SizedBox.shrink(); // safety fallback
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +142,8 @@ class _SkillCardState extends State<_SkillCard> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center, // center content
             children: [
-              Icon(widget.skill['icon'], size: 24, color: Colors.white),
+              _buildIcon(widget.skill['icon']),
+
               const SizedBox(width: 12),
               Text(
                 widget.skill['name'],
